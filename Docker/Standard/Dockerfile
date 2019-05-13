@@ -39,10 +39,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --
         && conda install -y numpy scipy cartopy gdal netcdf4 obspy \
         && rm -rf /var/lib/apt/lists/*
 
-#
 
-RUN pip install stripy
-RUN pip install git+https://github.com/OKaluza/LavaVu.git
+
+RUN pip install --no-cache-dir stripy
+RUN pip install --no-cache-dir git+https://github.com/OKaluza/LavaVu.git
+RUN pip install --no-cache-dir pandas
+RUN pip install --no-cache-dir scikit-learn
+RUN pip install --no-cache-dir obspy
 
 # RUN useradd --create-home --home-dir /home/jovyan --shell /bin/bash --user-group jovyan || true
 
@@ -85,4 +88,4 @@ WORKDIR  ${HOME}
 # note we use xvfb which to mimic the X display for lavavu
 ENTRYPOINT ["/usr/local/bin/xvfbrun.sh"]
 
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--allow-root", "--NotebookApp.token=''"]
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.default_url='lab/tree/Notebooks/0-StartHere.ipynb'"]
