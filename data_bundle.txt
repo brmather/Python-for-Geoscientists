@@ -1,1 +1,5 @@
+Data Bundle
 https://cloudstor.aarnet.edu.au/plus/s/07UkxJQVYjMR7iZ
+
+ETOPO1 Dataset - put this in your "CourseContent/Data/Resources" folder 
+https://cloudstor.aarnet.edu.au/plus/s/86mJxz4iEOF9vE4
