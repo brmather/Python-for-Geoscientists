@@ -67,11 +67,17 @@ conda install -c conda-forge gplately scikit-learn jupyter
 my-env needs to be activated whenever you use GPlately: i.e. conda activate my-env.
 
 
+### Docker
+
+Alternatively a Docker image can be sourced from: https://hub.docker.com/repository/docker/nickywright/geo-python/general
+
 ### Acknowledgements
 
 This coursework was created by a number of collaborators whom we want to acknowledge:
 
 - Louis Moresi (for the course structure and the majority of the notebooks)
+- Sara Moron (for some updates to the notebooks)
 - Nathanial Butterworth (machine learning and introductionary notebooks)
 - Rohitash Chandra (machine learning and data wrangling)
 - Ben Mather (advanced finite difference notebooks)
+- Nicky Wright (for the docker image)
