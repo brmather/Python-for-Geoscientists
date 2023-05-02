@@ -1,0 +1,120 @@
+# ------ DockerFile for running various scripts and codes
+# This is specifically for DockerDesktop 2.2
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# set up environment.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3-pip \
+    libnetcdf-dev \
+    libgdal-dev \
+    libgeos-dev \
+    proj-data \
+    python3-gdal \
+    python3-dev \
+    g++ \
+    gfortran \
+    ffmpeg \
+    cmake \
+    make \
+    ghostscript \
+    gmt-gshhg \
+    gmt-dcw \
+    gdal-bin \
+    wget \
+    software-properties-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* 
+
+# install GMT from source. Default GMT is otherwise too old (6.0.0)
+# GMT can be downloaded from here: https://github.com/GenericMappingTools/gmt/releases/tag/6.4.0
+# COPY gmt-6.4.0-src.tar.gz /
+RUN wget https://github.com/GenericMappingTools/gmt/releases/download/6.4.0/gmt-6.4.0-src.tar.gz -O ~/gmt-6.4.0-src.tar.gz  && \
+    tar xvf ~/gmt-6.4.0-src.tar.gz \
+    && cp gmt-6.4.0/cmake/ConfigUserTemplate.cmake gmt-6.4.0/cmake/ConfigUser.cmake \
+    && mkdir gmt-6.4.0/build \
+    && cd gmt-6.4.0/build \
+    && cmake .. \
+    && cmake --build . \
+    && cmake --build . --target install \
+    && cd ../.. \
+    && rm ~/gmt-6.4.0-src.tar.gz && rm -r /gmt-6.4.0 \
+    && apt remove cmake -y \
+    && apt remove make -y
+
+# install pygplates!
+# Copy both amd64 and arm64 versions, and then check which one we need
+# PyGPlates can be downloaded from here: https://www.earthbyte.org/download-pygplates-0-36/
+COPY pygplates_0.36.0_py310_ubuntu-22.04-*64.deb /
+
+## Check the architecture, and install the correct pygplates
+RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
+    && apt-get update \
+    && apt install -y -f ./pygplates_0.36.0_py310_ubuntu-22.04-$arch.deb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm /pygplates_0.36.0_py310_ubuntu-22.04-*.deb
+
+
+# set pythonpath
+ENV PYTHONPATH=$PYTHONPATH:/usr/lib
+
+# install Cython as root, and also set python = python3
+RUN pip3 install --no-cache-dir Cython \
+    && cd "$(dirname $(which python3))" \
+    && ln -s idle3 idle \
+    && ln -s pydoc3 pydoc \
+    && ln -s python3 python \
+    && ln -s python3-config python-config \
+    && echo alias ls="'"'ls --color=auto'"'" >>  /etc/profile \
+	    && echo "PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /etc/profile
+
+# ------
+# add user
+ENV NB_USER jovyan
+ENV NB_HOME /home/$NB_USER
+RUN useradd -m -s /bin/bash -N $NB_USER -g users \
+    &&  mkdir -p /$NB_HOME/workspace \
+    &&  chown -R $NB_USER:users $NB_HOME
+VOLUME $NB_HOME/workspace
+
+# switch user
+USER $NB_USER
+WORKDIR $NB_HOME
+
+# ------
+# install various python packages
+# --no-cache-dir (and doing it all in one RUN command) is my attempt to try and reduce the image size
+RUN pip3 install --no-cache-dir shapely \
+    && pip3 install --no-cache-dir pygmt \
+        jupyterlab \
+        pandas \
+        xarray \
+        numpy \
+        matplotlib \
+        scipy \
+        datetime \
+        fiona \
+        geopandas \
+        rioxarray \
+        cartopy \
+        PlateTectonicTools \
+        gplately \
+        stripy \
+        moviepy \
+        joblib \
+        scikit-learn \
+        pyyaml \
+        pybacktrack \
+        rtree \
+        cmocean \
+    && pip3 install --no-cache-dir --upgrade numpy
+	
+ENV PATH "/$NB_HOME/.local/bin:${PATH}"
+# SHELL ["/bin/bash", "-l", "-c"]
+ENV SHELL /bin/bash
+	
+# ------ start command
+EXPOSE 8888
+CMD ["jupyter-lab", "--no-browser", "--ip=0.0.0.0"]

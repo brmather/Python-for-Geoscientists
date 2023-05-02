@@ -1,4 +1,4 @@
-## Python for Geoscientists
+# Python for Geoscientists
 
 A notebook-based introduction to python, jupyter notebooks and programming workflows with examples from python packages for the Earth Sciences.
 
@@ -16,7 +16,7 @@ The material is broken down into a number of sections of, approximately, increas
   1. [Finite Differences with numpy](CourseContent/Notebooks/SolveMathProblems/1-IntroductionToNumericalSolutions.ipynb)
  
  
-### Description
+## Description
 
 Python has become a popular language for scientific computing, boasting a rich set of libraries
 relevant to geoscientists working with data. It has all the friendly features and conveniences you
@@ -32,38 +32,52 @@ We will introduce/review the 'standard' scientific python toolkits such as numpy
 We will learn how to orchestrate common earth science python software applications, seismic data set acquisition and analysis (obspy), meshing and interpolation (stripy). We will learn how to solve very simple differential equations with application to geothermal energy and ground water flow, statistical analysis of data sets.
 
 
-### Dependencies
-
-We have distributed this as a Docker image for portability, but it is possible to install python3 and additional dependencies on your computer to make this run natively:
+## Dependencies
 
 - `numpy`
 - `scipy`
 - `matplotlib`
-- `cartopy` (requires GDAL libraries)
-- `lavavu` (for SphericalTriangulation notebooks only)
+- `cartopy`
 - `pandas`
 - `scikit-learn`
-- `obspy`
 - `jupyter`
+- `pygplates`
+- `gplately`
 
-These may all be installed with **pip**:
+## Installation
 
-```sh
-python3 -m pip install jupyter
+You can install the all of the above dependencies using conda:
+
+```python
+conda install -c conda-forge gplately scikit-learn jupyter
 ```
 
-or through **conda**, which comes with [Anaconda](https://docs.anaconda.com/anaconda/install/):
+If you don't already have conda installed, we recommend [miniforge](https://github.com/conda-forge/miniforge).
+
+### Creating a new conda environment
+
+We recommend creating a new conda environment inside which to install these dependencies. This avoids any potential conflicts in your base Python environment. In the example below we create a new environment called "my-env":
 
 ```sh
-conda install jupyter
+conda create -n my-env
+conda activate my-env
+conda install -c conda-forge gplately scikit-learn jupyter
 ```
 
+my-env needs to be activated whenever you use GPlately: i.e. conda activate my-env.
+
+
+### Docker
+
+Alternatively a Docker image can be sourced from: https://hub.docker.com/repository/docker/nickywright/geo-python/general
 
 ### Acknowledgements
 
 This coursework was created by a number of collaborators whom we want to acknowledge:
 
 - Louis Moresi (for the course structure and the majority of the notebooks)
+- Sara Moron (for some updates to the notebooks)
 - Nathanial Butterworth (machine learning and introductionary notebooks)
 - Rohitash Chandra (machine learning and data wrangling)
 - Ben Mather (advanced finite difference notebooks)
+- Nicky Wright (for the docker image)
