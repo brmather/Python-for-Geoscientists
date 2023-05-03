@@ -100,8 +100,6 @@ RUN pip3 install --no-cache-dir shapely \
         rioxarray \
         cartopy \
         PlateTectonicTools \
-        gplately \
-        stripy \
         moviepy \
         joblib \
         scikit-learn \
@@ -109,7 +107,9 @@ RUN pip3 install --no-cache-dir shapely \
         pybacktrack \
         rtree \
         cmocean \
-    && pip3 install --no-cache-dir --upgrade numpy
+    && pip3 install --no-cache-dir --upgrade numpy \\
+    && pip3 install --no-cache-dir stripy gplately --no-binary=stripy
+
 	
 ENV PATH "/$NB_HOME/.local/bin:${PATH}"
 # SHELL ["/bin/bash", "-l", "-c"]
